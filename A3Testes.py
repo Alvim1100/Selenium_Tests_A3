@@ -73,6 +73,7 @@ class SauceDemoTestes:
     ### TESTES POSITIVOS ###
 
     def tp_01(self):
+        # Teste 1 - Login com sucesso
         try:
             self.iniciar_driver()
             self.driver.get("https://www.saucedemo.com")
@@ -88,12 +89,13 @@ class SauceDemoTestes:
             return (False,f"Teste 1: Erro {e}")
         
     def tp_02(self):
+        # Teste 2 - Adiciona ao carrinho
         try:
             if self.driver is None:
                 self.garantir_login()
 
             if "inventory" not in self.driver.current_url:
-                self.garantir_login()
+                self.driver.get("https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "add-to-cart-sauce-labs-bike-light").click()
             carrinho_simbolo = self.driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
@@ -103,8 +105,31 @@ class SauceDemoTestes:
             return (False, "Teste 2 - Falha!")
         except Exception as e:
             return (False,f"Teste 2: Erro {e}")
+        
+    def tp_03(self):
+        # Teste 3 - Remove do carrinho
+        try:
+            if self.driver is None:
+                self.garantir_login()
 
+            if "inventory" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
 
+            botoes_remover = self.driver.find_elements(By.ID, "remove-sauce-labs-bike-light")
+            if len(botoes_remover) > 0:
+                botoes_remover[0].click()
+            else:
+                self.driver.find_element(By.ID, "add-to-cart-sauce-labs-bike-light").click()
+                time.sleep(0.5)
+                self.driver.find_element(By.ID, "remove-sauce-labs-bike-light").click()
+            
+            badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+            if len(badges) == 0:
+                self.alertar(self.driver, "TESTE 3: Retirado do carrinho com sucesso!")
+                return(True, "Teste 3 - Sucesso!")
+            return (False, "Teste 3 - Falha!")
+        except Exception as e:
+            return (False,f"Teste 3: Erro {e}")
 
     ### TESTES NEGATIVOS ###
 
@@ -138,7 +163,7 @@ class SauceDemoTestes:
             msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']").text
             if "Epic sadface: Password is required" in msg: 
                 self.alertar(self.driver, "TESTE 2 foi um sucesso!")
-                 
+                return(True,"Teste 3 - Sucesso!")
             else: 
                 return (False, f"Teste 2 - Falhou")
         except Exception as e:
@@ -181,7 +206,8 @@ if __name__ == "__main__":
 
     lista_positivos = [
         teste.tp_01,
-        teste.tp_02
+        teste.tp_02,
+        teste.tp_03
     ]
 
     lista_negativos = [
