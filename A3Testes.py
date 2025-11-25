@@ -69,6 +69,18 @@ class SauceDemoTestes:
 
         if "saucedemo.com" not in self.driver.current_url:
             self.driver.get("https://www.saucedemo.com")
+
+    def executar(self, lista_de_metodos, tipo_teste):
+        print(f"><><><><> RODANDO TESTES {tipo_teste} <><><><><")
+        self.resultados = []
+
+        for teste in lista_de_metodos:
+            passou, mensagem = teste()
+            icone = "✔" if passou else "✘"
+            print(f"{icone} {mensagem}")
+
+            self.resultados.append(f"{icone} {mensagem}")
+            time.sleep(0.5)
     
     ### TESTES POSITIVOS ###
 
@@ -130,6 +142,25 @@ class SauceDemoTestes:
             return (False, "Teste 3 - Falha!")
         except Exception as e:
             return (False,f"Teste 3: Erro {e}")
+        
+    def tp_04(self):
+        # Teste 4 - Visualizar carrinho
+        try:
+            if self.driver is None:
+                    self.garantir_login()
+
+            if "inventory" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            self.driver.find_element(By.ID, "shopping_cart_container").click()
+
+            if "cart.html" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 4: Página do carrinho acessada!")
+                return(True, "Teste 4 - Sucesso!")
+            return (False, "Teste 4 - Falha!")
+        except Exception as e:
+            return (False,f"Teste 4: Erro {e}")
+
 
     ### TESTES NEGATIVOS ###
 
@@ -187,19 +218,6 @@ class SauceDemoTestes:
             return (False, f"Teste 3 - Erro {e}")
 
 
-    def executar(self, lista_de_metodos, tipo_teste):
-        print(f"><><><><> RODANDO TESTES {tipo_teste} <><><><><")
-        self.resultados = []
-
-        for teste in lista_de_metodos:
-            passou, mensagem = teste()
-            icone = "✔" if passou else "✘"
-            print(f"{icone} {mensagem}")
-
-            self.resultados.append(f"{icone} {mensagem}")
-            time.sleep(0.5)
-
-
 # MENU #
 if __name__ == "__main__":
     teste = SauceDemoTestes()
@@ -207,7 +225,8 @@ if __name__ == "__main__":
     lista_positivos = [
         teste.tp_01,
         teste.tp_02,
-        teste.tp_03
+        teste.tp_03,
+        teste.tp_04
     ]
 
     lista_negativos = [
