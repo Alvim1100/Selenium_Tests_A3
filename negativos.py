@@ -6,7 +6,7 @@ from base import SauceBase
 
 class TestesNegativos(SauceBase):
     def tn_01(self):
-        #Teste 1 - Login sem usuario
+        """TN01 - Login sem Usuário"""
         try:
             self.iniciar_driver()
             self.garantir_logout()
@@ -25,7 +25,7 @@ class TestesNegativos(SauceBase):
             return(False, f"Teste 1: Erro {e}")
         
     def tn_02(self):
-        #Teste 2 - Login sem senha
+        """TN02 - Login sem Senha"""
         try:    
             self.garantir_logout()
             self.driver.refresh()
@@ -42,7 +42,7 @@ class TestesNegativos(SauceBase):
             return (False, f"Teste 2 - Erro {e}")
         
     def tn_03(self):
-            #Teste 3 - Login dados invalidos
+        """TN03 - Login com Dados Inválidos"""
         try:
             self.garantir_logout()
             self.driver.refresh()
@@ -57,3 +57,71 @@ class TestesNegativos(SauceBase):
                 return (False, f"Teste 3 - Falhou")
         except Exception as e:
             return (False, f"Teste 3 - Erro {e}")
+        
+
+    def tn_04(self):
+        """TN04 - Login com Usuário Bloqueado"""
+        # ... código ...
+
+    def tn_05(self):
+        """TN05 - Login Case Sensitive (Maiúsculas Erradas)"""
+        # ... código ...
+
+    def tn_06(self):
+        """TN06 - Login com Espaço em Branco Extra"""
+        # ... código ...
+
+    def tn_07(self):
+        """TN07 - Login Problem User (Imagens Quebradas)"""
+        # ... código ...
+
+    def tn_08(self):
+        """TN08 - Login Performance User (Tempo Limite)"""
+        # ... código ...
+
+    def tn_09(self):
+        """TN09 - Acesso Direto URL Restrita (Inventory)"""
+        # ... código ...
+
+    def tn_10(self):
+        """TN10 - Acesso Direto URL Restrita (Checkout Step 1)"""
+        # ... código ...
+
+    def tn_11(self):
+        """TN11 - Acesso Direto URL Restrita (Checkout Step 2)"""
+        # ... código ...
+
+    def tn_12(self):
+        """TN12 - Acesso Direto URL Restrita (Finish)"""
+        # ... código ...
+
+    def tn_13(self):
+        """TN13 - Acesso a Página Inexistente (404)"""
+        # ... código ...
+
+    def tn_14(self):
+        """TN14 - Checkout sem Nome"""
+        # ... código ...
+
+    def tn_15(self):
+        """TN15 - Checkout sem Sobrenome"""
+        # ... código ...
+
+    def tn_16(self):
+        """TN16 - Checkout sem CEP"""
+        # ... código ...
+
+    def tn_17(self):
+        """TN17 - Checkout com Injeção de Script (XSS)"""
+        # ... código ...
+
+    def tn_18(self):
+        """TN18 - Checkout com Nome Gigante (Stress Test)"""
+        # ... código ...
+
+    def tn_19(self):
+        """TN19 - Remover Item Inexistente via Código"""
+        # ... código ...
+
+    def tn_20(self):
+        """TN20 - Tentar Checkout com Carrinho Vazio"""

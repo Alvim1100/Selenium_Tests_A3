@@ -19,7 +19,14 @@ def menu():
         run_pos.tp_10,
         run_pos.tp_11,
         run_pos.tp_12,
-        run_pos.tp_13
+        run_pos.tp_13,
+        run_pos.tp_14,
+        run_pos.tp_15,
+        run_pos.tp_16,
+        run_pos.tp_17,
+        run_pos.tp_18,
+        run_pos.tp_19,
+        run_pos.tp_20
     ]
 
     lista_negativos = [

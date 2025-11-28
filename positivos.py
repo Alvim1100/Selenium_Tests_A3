@@ -6,7 +6,7 @@ from base import SauceBase
 
 class TestesPositivos(SauceBase):
     def tp_01(self):
-        # Teste 1 - Login com sucesso
+        """TP01 - Login com Sucesso (Standard User)"""
         try:
             self.iniciar_driver()
             self.driver.get("https://www.saucedemo.com")
@@ -22,9 +22,9 @@ class TestesPositivos(SauceBase):
             return (False,f"Teste 1: Erro {e}")
         
     def tp_02(self):
-        # Teste 2 - Adiciona ao carrinho
+        """TP02 - Adicionar Produto ao Carrinho (Vitrine)"""
         try:
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "add-to-cart-sauce-labs-bike-light").click()
             carrinho_simbolo = self.driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
@@ -36,9 +36,9 @@ class TestesPositivos(SauceBase):
             return (False,f"Teste 2: Erro {e}")
         
     def tp_03(self):
-        # Teste 3 - Remove do carrinho
+        """TP03 - Remover Produto do Carrinho (Vitrine)"""
         try:
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             botoes_remover = self.driver.find_elements(By.ID, "remove-sauce-labs-bike-light")
             if len(botoes_remover) > 0:
@@ -57,9 +57,9 @@ class TestesPositivos(SauceBase):
             return (False,f"Teste 3: Erro {e}")
         
     def tp_04(self):
-        # Teste 4 - Visualizar carrinho
+        """TP04 - Acessar Página do Carrinho"""
         try:
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "shopping_cart_container").click()
 
@@ -71,9 +71,9 @@ class TestesPositivos(SauceBase):
             return (False,f"Teste 4: Erro {e}")
     
     def tp_05(self):
-        # Teste 5 - Clicar em "Checkout" no carrinho.
+        """TP05 - Iniciar Checkout (Com Itens)"""
         try:
-            self.garantir_url("https://www.saucedemo.com/cart.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/cart.html")
 
             badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
 
@@ -94,14 +94,16 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 5 - Erro {e}")
         
     def tp_06(self):
-        #Checkout dados
-
+        """TP06 - Preencher Formulário de Entrega"""
         try:
             if self.driver is None:
                 self.garantir_login()
 
             if "checkout-step-one" not in self.driver.current_url:
                 self.driver.get("https://www.saucedemo.com/cart.html")
+                badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+                if len(badges) == 0:
+                    self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
                 self.driver.find_element(By.ID, "checkout").click()
 
             self.preenche_checkout("Fulano", "Da Silva", "123456")
@@ -117,7 +119,7 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 6 - Erro {e}")
         
     def tp_07(self):
-        # Finaliza a compra
+        """TP07 - Finalizar Compra com Sucesso"""
 
         try:
             if self.driver is None:
@@ -130,7 +132,7 @@ class TestesPositivos(SauceBase):
                 if len(badges) == 0:
                     self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
                 self.driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
-                self.driver.find_element(By.ID, "checkout").click
+                self.driver.find_element(By.ID, "checkout").click()
                 self.preenche_checkout("Fulano", "Da Silva", "123456")
                 self.driver.find_element(By.ID, "continue").click()
             
@@ -147,10 +149,10 @@ class TestesPositivos(SauceBase):
             return(False, f"Teste 7 - Erro {e}")
         
     def tp_08(self):
-        # Filtro Z-A
+        """TP08 - Filtro Z-A (Ordem Alfabética Decrescente)"""
 
         try:
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             resposta = self.verificar_filtro_nome("za", True)
 
@@ -162,9 +164,10 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 8 - Erro {e}")
         
     def tp_09(self):
-        # Filtro A - Z
+        """TP08 - Filtro Z-A (Ordem Alfabética Decrescente)"""
+
         try:
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             resposta = self.verificar_filtro_nome("az", False)
 
@@ -176,9 +179,9 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 9 - Erro {e}")
         
     def tp_10(self):
-        # Filtro Preço (Baixo - Alto)
+        """TP10 - Filtro Preço (Menor para Maior)"""
         try: 
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             resposta = self.verifica_filtro_preco("lohi",False)
 
@@ -190,9 +193,9 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 10 - Erro {e}")
         
     def tp_11(self):
-        # Filtro Preço (Alto - Baixo)
+        """TP11 - Filtro Preço (Maior para Menor)"""
         try: 
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             resposta = self.verifica_filtro_preco("hilo",True)
 
@@ -204,9 +207,9 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 11 - Erro {e}")
         
     def tp_12(self):
-        # Verifica ícones no footer
+        """TP12 - Verificar Links do Rodapé (Redes Sociais)"""
         try: 
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             time.sleep(0.5)
@@ -224,9 +227,9 @@ class TestesPositivos(SauceBase):
             return(False, f"Teste 12 - Erro {e}")
         
     def tp_13(self):
-    # Verifica ícones no footer
+        """TP13 - Abrir Detalhes do Produto"""
         try: 
-            self.garantir_url("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "item_5_img_link").click()
 
@@ -237,3 +240,162 @@ class TestesPositivos(SauceBase):
             return (False, "Teste 13 - Falha!")
         except Exception as e:
             return(False, f"Teste 13 - Erro {e}")
+    
+    def tp_14(self):
+        """TP14 - Adicionar ao Carrinho via Detalhes"""
+        try:
+            self.garantir_url("id=5", "https://www.saucedemo.com/inventory-item.html?id=5")
+            time.sleep(1)
+
+            botao = self.driver.find_element(By.CLASS_NAME, "btn_inventory")
+
+            if "REMOVE" in botao.text.upper():
+                botao.click()
+                time.sleep(0.5)
+                botao = self.driver.find_element(By.CLASS_NAME, "btn_inventory")
+
+            if "ADD" in botao.text.upper():
+                botao.click()
+            else:
+                return (False, f"Teste 14 - Falha! O botão está com texto estranho: {botao.text}")
+
+            time.sleep(0.5)
+            badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+
+            if len(badges) > 0:
+                self.alertar(self.driver, "TESTE 14: Item adicionado com sucesso!")
+                return (True, "Teste 14 - Sucesso!")
+                
+            return (False, "Teste 14 - Falha! Badge não apareceu.")
+
+        except Exception as e:
+            return (False, f"Teste 14 - Erro {e}")
+        
+    def tp_15(self):
+        """TP15 - Voltar para Home (Botão Back)"""
+        try:
+            self.garantir_url("id=5","https://www.saucedemo.com/inventory-item.html?id=5")
+
+            self.driver.find_element(By.ID, "back-to-products").click()
+
+            if "inventory.html" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 15: Retornou para a home!")
+                return (True, "Teste 15 - Sucesso!")
+                
+            return (False, "Teste 15 - Falha!")
+        except Exception as e:
+            return(False, f"Teste 15 - Erro {e}")
+        
+    def tp_16(self):
+        """TP16 - Botão Continue Shopping (Carrinho)"""
+        try:
+            self.garantir_url("inventory.html", "https://www.saucedemo.com/inventory.html")
+
+            self.driver.find_element(By.ID, "shopping_cart_container").click()
+            self.driver.find_element(By.ID, "continue-shopping").click()
+
+            if "inventory.html" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 16: Retornou para a home!")
+                return (True, "Teste 16 - Sucesso!")
+                    
+            return (False, "Teste 16 - Falha!")
+        except Exception as e:
+            return(False, f"Teste 16 - Erro {e}")
+        
+    def tp_17(self):
+        """TP17 - Cancelar Checkout (Etapa 1 - Dados)"""
+        try:
+            if self.driver is None:
+                self.garantir_login()
+
+            if "checkout-step-one" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/cart.html")
+                self.driver.find_element(By.ID, "checkout").click()
+
+            self.driver.find_element(By.ID, "cancel").click()
+            time.sleep(0.5)
+
+            if "cart.html" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 17: Botão Cancelar funcionou!")
+                return (True, "Teste 17 - Sucesso!")
+            
+            return (False, "Teste 17 - Falha!")
+
+        except Exception as e:
+            return (False, f"Teste 17 - Erro {e}")
+        
+    def tp_18(self):
+        """TP18 - Cancelar Checkout (Etapa 2 - Resumo)"""
+        try:
+            if self.driver is None:
+                self.garantir_login()
+
+            if "checkout-step-two" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+                try: 
+                    self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+                except: 
+                    pass
+                self.driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+                self.driver.find_element(By.ID, "checkout").click()
+                self.preenche_checkout("Fulano", "Da Silva", "123456")
+                self.driver.find_element(By.ID, "continue").click()
+
+            self.driver.find_element(By.ID, "cancel").click()
+            time.sleep(0.5)
+
+            if "inventory.html" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 18: Cancelamento no resumo OK!")
+                return (True, "Teste 18 - Sucesso!")
+            
+            return (False, "Teste 18 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 18 - Erro {e}")
+        
+    def tp_19(self):
+        """TP19 - Reset App State (Limpar Sessão)"""
+        try:
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
+
+            try:
+                self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+            except:
+                pass
+
+            badges_antes = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+            if len(badges_antes) == 0:
+                return (False, "Teste 19 - Não conseguiu adicionar item.")
+            
+            self.driver.find_element(By.ID, "react-burger-menu-btn").click()
+            time.sleep(1) 
+            self.driver.find_element(By.ID, "reset_sidebar_link").click()
+            self.driver.find_element(By.ID, "react-burger-cross-btn").click()
+            time.sleep(0.5)
+
+            badges_depois = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+
+            if len(badges_depois) == 0:
+                self.alertar(self.driver, "TESTE 19: App Resetado!")
+                return (True, "Teste 19 - Sucesso!")
+            
+            return (False, "Teste 19 - Falha!")
+
+        except Exception as e:
+            return (False, f"Teste 19 - Erro {e}")
+        
+    def tp_20(self):
+        """TP20 - Logout do Sistema"""
+        try:
+            self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")
+            
+            self.driver.find_element(By.ID, "react-burger-menu-btn").click()
+            time.sleep(1) 
+            self.driver.find_element(By.ID, "logout_sidebar_link").click()
+            time.sleep(0.5)
+
+            if "https://www.saucedemo.com" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 20 - Logout feito com sucesso!")
+                return (True, "Teste 20 - Sucesso!")
+            return (False, "Teste 20 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 20 - Erro {e}")

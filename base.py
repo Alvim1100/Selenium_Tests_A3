@@ -67,11 +67,11 @@ class SauceBase:
         except:
             pass
 
-    def garantir_url(self, url):
+    def garantir_url(self, parte_desejada , url):
         if self.driver is None:
                 self.garantir_login()
 
-        if "inventory.html" not in self.driver.current_url:
+        if parte_desejada not in self.driver.current_url:
             self.driver.get(url)
 
     def garantir_logout(self):
@@ -124,9 +124,18 @@ class SauceBase:
         self.resultados = []
 
         for teste in lista_de_metodos:
+            descricao = teste.__doc__
+
+            if not descricao:
+                descricao = teste.__name__ 
+            
+            descricao = descricao.strip()
             passou, mensagem = teste()
             icone = "✔" if passou else "✘"
-            print(f"{icone} {mensagem}")
 
-            self.resultados.append(f"{icone} {mensagem}")
+            # Formato: [✔] TP01 - Login Standard: Mensagem do sistema
+            linha_final = f"[{icone}] {descricao}: {mensagem}"
+            
+            print(linha_final)
+            self.resultados.append(linha_final)
             time.sleep(0.5)
