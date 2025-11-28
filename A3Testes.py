@@ -25,7 +25,7 @@ class SauceDemoTestes:
     def digitar_devagar(self,elemt, text):
         for letra in text:
             elemt.send_keys(letra)
-            time.sleep(0.08)
+            time.sleep(0.05)
 
     def alertar(self,driver, mensagem):
         driver.execute_script(f"alert('{mensagem}')")
@@ -42,6 +42,11 @@ class SauceDemoTestes:
         senha = driver.find_element(By.ID, "password")
         self.digitar_devagar(senha, user_pass)
         time.sleep(1)
+
+    def preenche_checkout(self, nome, sobrenome, cep):
+        self.digitar_devagar(self.driver.find_element(By.ID, "first-name"), nome)
+        self.digitar_devagar(self.driver.find_element(By.ID, "last-name"), sobrenome)
+        self.digitar_devagar(self.driver.find_element(By.ID, "postal-code"), cep)
 
     def garantir_login(self):
         if self.driver is None:
@@ -187,8 +192,60 @@ class SauceDemoTestes:
         
         except Exception as e:
             return (False, f"Teste 5 - Erro {e}")
+        
+    def tp_06(self):
+        #Checkout dados
 
+        try:
+            if self.driver is None:
+                self.garantir_login()
+
+            if "checkout-step-one" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/cart.html")
+                self.driver.find_element(By.ID, "checkout").click()
+
+            self.preenche_checkout("Fulano", "Da Silva", "123456")
+            self.driver.find_element(By.ID, "continue").click()
+
+            if "checkout-step-two" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 6: Dados aceitos!")
+                return (True, "Teste 6 - Sucesso!")
             
+            return (False, "Teste 6 - Falha!")
+
+        except Exception as e:
+            return (False, f"Teste 6 - Erro {e}")
+        
+    def tp_07(self):
+        # Finaliza a compra
+
+        try:
+            if self.driver is None:
+                self.garantir_login
+            
+            if "checkout-step-two" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+                badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+
+                if len(badges) == 0:
+                    self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+                self.driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+                self.driver.find_element(By.ID, "checkout").click
+                self.preenche_checkout("Fulano", "Da Silva", "123456")
+                self.driver.find_element(By.ID, "continue").click()
+            
+            self.driver.find_element(By.ID, "finish").click()
+
+            if "checkout-complete" in self.driver.current_url:
+                msg = self.driver.find_element(By.CLASS_NAME, "complete-header").text
+
+                if "Thank you for your order" in msg:
+                    self.alertar(self.driver, "TESTE 7: Compra realizada!")
+                    return(True, "Teste 7 - Sucesso!")
+            return(False, "Teste 7 - Falha!")
+        except Exception as e:
+            return(False, f"Teste 7 - Erro {e}")
+        
 
 
     ### TESTES NEGATIVOS ###
@@ -256,7 +313,9 @@ if __name__ == "__main__":
         teste.tp_02,
         teste.tp_03,
         teste.tp_04,
-        teste.tp_05
+        teste.tp_05,
+        teste.tp_06,
+        teste.tp_07
     ]
 
     lista_negativos = [
