@@ -24,11 +24,7 @@ class TestesPositivos(SauceBase):
     def tp_02(self):
         # Teste 2 - Adiciona ao carrinho
         try:
-            if self.driver is None:
-                self.garantir_login()
-
-            if "inventory" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "add-to-cart-sauce-labs-bike-light").click()
             carrinho_simbolo = self.driver.find_element(By.CLASS_NAME, "shopping_cart_badge").text
@@ -42,11 +38,7 @@ class TestesPositivos(SauceBase):
     def tp_03(self):
         # Teste 3 - Remove do carrinho
         try:
-            if self.driver is None:
-                self.garantir_login()
-
-            if "inventory" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             botoes_remover = self.driver.find_elements(By.ID, "remove-sauce-labs-bike-light")
             if len(botoes_remover) > 0:
@@ -67,11 +59,7 @@ class TestesPositivos(SauceBase):
     def tp_04(self):
         # Teste 4 - Visualizar carrinho
         try:
-            if self.driver is None:
-                    self.garantir_login()
-
-            if "inventory" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             self.driver.find_element(By.ID, "shopping_cart_container").click()
 
@@ -85,11 +73,7 @@ class TestesPositivos(SauceBase):
     def tp_05(self):
         # Teste 5 - Clicar em "Checkout" no carrinho.
         try:
-            if self.driver is None:
-                    self.garantir_login()
-
-            if "cart" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/cart.html")
+            self.garantir_url("https://www.saucedemo.com/cart.html")
 
             badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
 
@@ -137,7 +121,7 @@ class TestesPositivos(SauceBase):
 
         try:
             if self.driver is None:
-                self.garantir_login
+                self.garantir_login()
             
             if "checkout-step-two" not in self.driver.current_url:
                 self.driver.get("https://www.saucedemo.com/inventory.html")
@@ -166,11 +150,7 @@ class TestesPositivos(SauceBase):
         # Filtro Z-A
 
         try:
-            if self.driver is None:
-                self.garantir_login
-
-            if "inventory.html" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             resposta = self.verificar_filtro_nome("za", True)
 
@@ -184,11 +164,7 @@ class TestesPositivos(SauceBase):
     def tp_09(self):
         # Filtro A - Z
         try:
-            if self.driver is None:
-                self.garantir_login
-
-            if "inventory.html" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             resposta = self.verificar_filtro_nome("az", False)
 
@@ -202,11 +178,7 @@ class TestesPositivos(SauceBase):
     def tp_10(self):
         # Filtro Preço (Baixo - Alto)
         try: 
-            if self.driver is None:
-                self.garantir_login
-
-            if "inventory.html" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             resposta = self.verifica_filtro_preco("lohi",False)
 
@@ -220,11 +192,7 @@ class TestesPositivos(SauceBase):
     def tp_11(self):
         # Filtro Preço (Alto - Baixo)
         try: 
-            if self.driver is None:
-                self.garantir_login
-
-            if "inventory.html" not in self.driver.current_url:
-                self.driver.get("https://www.saucedemo.com/inventory.html")
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
 
             resposta = self.verifica_filtro_preco("hilo",True)
 
@@ -234,3 +202,38 @@ class TestesPositivos(SauceBase):
             return (False, "Teste 11 - Falha!")
         except Exception as e:
             return (False, f"Teste 11 - Erro {e}")
+        
+    def tp_12(self):
+        # Verifica ícones no footer
+        try: 
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
+
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            time.sleep(0.5)
+
+            twitter = self.driver.find_elements(By.CLASS_NAME, "social_twitter")
+            facebook = self.driver.find_elements(By.CLASS_NAME, "social_facebook")
+            linkedin = self.driver.find_elements(By.CLASS_NAME, "social_linkedin")
+
+            if len(twitter) > 0 and len(facebook) > 0 and len(linkedin) > 0:
+                self.alertar(self.driver, "TESTE 12: Ícones do footer visíveis!")
+                return (True, "Teste 12 - Sucesso!")
+            
+            return (False, "Teste 12 - Falha!")
+        except Exception as e:
+            return(False, f"Teste 12 - Erro {e}")
+        
+    def tp_13(self):
+    # Verifica ícones no footer
+        try: 
+            self.garantir_url("https://www.saucedemo.com/inventory.html")
+
+            self.driver.find_element(By.ID, "item_5_img_link").click()
+
+            if "id=5" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 13: Abriu os detalhes do pedido!")
+                return (True, "Teste 13 - Sucesso!")
+            
+            return (False, "Teste 13 - Falha!")
+        except Exception as e:
+            return(False, f"Teste 13 - Erro {e}")

@@ -21,7 +21,8 @@ class SauceBase:
         print("\n--- RELATÓRIO FINAL ---")
         for resultado in self.resultados:
             print(resultado)
-        self.driver.quit()
+        if self.driver: 
+            self.driver.quit()
 
     def digitar_devagar(self,elemt, text):
         for letra in text:
@@ -29,12 +30,14 @@ class SauceBase:
             time.sleep(0.05)
 
     def alertar(self,driver, mensagem):
-        driver.execute_script(f"alert('{mensagem}')")
-        wait = WebDriverWait(driver, 5)
-        wait.until(EC.alert_is_present())
-        alerta = driver.switch_to.alert
-        time.sleep(3) 
-        alerta.accept()
+        try:
+            driver.execute_script(f"alert('{mensagem}')")
+            wait = WebDriverWait(driver, 5)
+            wait.until(EC.alert_is_present())
+            alerta = driver.switch_to.alert
+            time.sleep(1.5) 
+            alerta.accept()
+        except: pass
 
     def preenche_login(self, driver, user_login, user_pass):
         usuario = driver.find_element(By.ID, "user-name")
@@ -63,6 +66,13 @@ class SauceBase:
             self.driver.find_element(By.ID, "login-button").click()
         except:
             pass
+
+    def garantir_url(self, url):
+        if self.driver is None:
+                self.garantir_login()
+
+        if "inventory.html" not in self.driver.current_url:
+            self.driver.get(url)
 
     def garantir_logout(self):
         if "inventory" in self.driver.current_url:
