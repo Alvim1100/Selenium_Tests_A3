@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
@@ -74,6 +75,39 @@ class SauceBase:
 
         if "saucedemo.com" not in self.driver.current_url:
             self.driver.get("https://www.saucedemo.com")
+
+    def verificar_filtro_nome(self, tipo, classificacao):
+        select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
+        select.select_by_value(tipo)
+        time.sleep(0.5)
+        
+        elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_name")
+        lista_do_site = [elem.text for elem in elementos]
+        lista_esperada = sorted(lista_do_site, reverse=classificacao)
+
+        if lista_do_site == lista_esperada:
+            return True
+        else: 
+            return False
+        
+    def verifica_filtro_preco(self,tipo,classificacao):
+        select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
+        select.select_by_value(tipo)
+        time.sleep(0.5)
+
+        elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_price")
+    
+        lista_numeros = []
+        for elem in elementos:
+            texto_limpo = elem.text.replace("$", "") # Remove o cifrão
+            numero = float(texto_limpo)              # Transforma em número real
+            lista_numeros.append(numero)
+
+        lista_esperada = sorted(lista_numeros, reverse=classificacao)
+
+        if lista_numeros == lista_esperada:
+            return True
+        else: return False
 
     def executar(self, lista_de_metodos, tipo_teste):
         print(f"><><><><> RODANDO TESTES {tipo_teste} <><><><><")

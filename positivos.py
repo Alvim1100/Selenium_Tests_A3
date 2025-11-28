@@ -172,15 +172,9 @@ class TestesPositivos(SauceBase):
             if "inventory.html" not in self.driver.current_url:
                 self.driver.get("https://www.saucedemo.com/inventory.html")
 
-            select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
-            select.select_by_value("za")
-            time.sleep(0.5)
-            
-            elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_name")
-            lista_do_site = [elem.text for elem in elementos]
-            lista_esperada = sorted(lista_do_site, reverse=True)
+            resposta = self.verificar_filtro_nome("za", True)
 
-            if lista_do_site == lista_esperada:
+            if resposta == True:
                 self.alertar(self.driver, "TESTE 8: Filtro Z-A funcionando!")
                 return (True, "Teste 8 - Sucesso!")
             return (False, "Teste 8 - Falha!")
@@ -189,7 +183,6 @@ class TestesPositivos(SauceBase):
         
     def tp_09(self):
         # Filtro A - Z
-
         try:
             if self.driver is None:
                 self.garantir_login
@@ -197,17 +190,47 @@ class TestesPositivos(SauceBase):
             if "inventory.html" not in self.driver.current_url:
                 self.driver.get("https://www.saucedemo.com/inventory.html")
 
-            select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
-            select.select_by_value("az")
-            time.sleep(0.5)
-            
-            elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_name")
-            lista_do_site = [elem.text for elem in elementos]
-            lista_esperada = sorted(lista_do_site)
+            resposta = self.verificar_filtro_nome("az", False)
 
-            if lista_do_site == lista_esperada:
+            if resposta == True:
                 self.alertar(self.driver, "TESTE 9: Filtro A-Z funcionando!")
                 return (True, "Teste 9 - Sucesso!")
             return (False, "Teste 9 - Falha!")
         except Exception as e:
             return (False, f"Teste 9 - Erro {e}")
+        
+    def tp_10(self):
+        # Filtro Preço (Baixo - Alto)
+        try: 
+            if self.driver is None:
+                self.garantir_login
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            resposta = self.verifica_filtro_preco("lohi",False)
+
+            if resposta == True:
+                self.alertar(self.driver, "TESTE 10: Preços ordenados corretamente!")
+                return (True, "Teste 10 - Sucesso!")
+            return (False, "Teste 10 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 10 - Erro {e}")
+        
+    def tp_11(self):
+        # Filtro Preço (Alto - Baixo)
+        try: 
+            if self.driver is None:
+                self.garantir_login
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            resposta = self.verifica_filtro_preco("hilo",True)
+
+            if resposta == True:
+                self.alertar(self.driver, "TESTE 11: Preços ordenados corretamente!")
+                return (True, "Teste 11 - Sucesso!")
+            return (False, "Teste 11 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 11 - Erro {e}")
