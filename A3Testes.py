@@ -160,6 +160,35 @@ class SauceDemoTestes:
             return (False, "Teste 4 - Falha!")
         except Exception as e:
             return (False,f"Teste 4: Erro {e}")
+    
+    def tp_05(self):
+        # Teste 5 - Clicar em "Checkout" no carrinho.
+        try:
+            if self.driver is None:
+                    self.garantir_login()
+
+            if "cart" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/cart.html")
+
+            badges = self.driver.find_elements(By.CLASS_NAME, "shopping_cart_badge")
+
+            if len(badges) == 0:
+                self.driver.find_element(By.ID, "continue-shopping").click()
+                time.sleep(0.5)
+                self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+                self.driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+
+            self.driver.find_element(By.ID, "checkout").click()
+
+            if "checkout-step-one" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 5: Página do checkout acessada!")
+                return (True, "Teste 5 - Sucesso!")
+            return(False, "Teste 5 - Falha!")
+        
+        except Exception as e:
+            return (False, f"Teste 5 - Erro {e}")
+
+            
 
 
     ### TESTES NEGATIVOS ###
@@ -226,7 +255,8 @@ if __name__ == "__main__":
         teste.tp_01,
         teste.tp_02,
         teste.tp_03,
-        teste.tp_04
+        teste.tp_04,
+        teste.tp_05
     ]
 
     lista_negativos = [
