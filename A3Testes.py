@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 
 
 class SauceDemoTestes:
@@ -246,6 +247,55 @@ class SauceDemoTestes:
         except Exception as e:
             return(False, f"Teste 7 - Erro {e}")
         
+    def tp_08(self):
+        # Filtro Z-A
+
+        try:
+            if self.driver is None:
+                self.garantir_login
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
+            select.select_by_value("za")
+            time.sleep(0.5)
+            
+            elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_name")
+            lista_do_site = [elem.text for elem in elementos]
+            lista_esperada = sorted(lista_do_site, reverse=True)
+
+            if lista_do_site == lista_esperada:
+                self.alertar(self.driver, "TESTE 8: Filtro Z-A funcionando!")
+                return (True, "Teste 8 - Sucesso!")
+            return (False, "Teste 8 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 8 - Erro {e}")
+        
+    def tp_09(self):
+        # Filtro A - Z
+
+        try:
+            if self.driver is None:
+                self.garantir_login
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            select = Select(self.driver.find_element(By.CLASS_NAME, "product_sort_container"))
+            select.select_by_value("az")
+            time.sleep(0.5)
+            
+            elementos = self.driver.find_elements(By.CLASS_NAME, "inventory_item_name")
+            lista_do_site = [elem.text for elem in elementos]
+            lista_esperada = sorted(lista_do_site)
+
+            if lista_do_site == lista_esperada:
+                self.alertar(self.driver, "TESTE 9: Filtro A-Z funcionando!")
+                return (True, "Teste 9 - Sucesso!")
+            return (False, "Teste 9 - Falha!")
+        except Exception as e:
+            return (False, f"Teste 9 - Erro {e}")
 
 
     ### TESTES NEGATIVOS ###
@@ -315,7 +365,9 @@ if __name__ == "__main__":
         teste.tp_04,
         teste.tp_05,
         teste.tp_06,
-        teste.tp_07
+        teste.tp_07,
+        teste.tp_08,
+        teste.tp_09
     ]
 
     lista_negativos = [
