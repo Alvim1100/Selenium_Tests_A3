@@ -32,7 +32,8 @@ def menu():
     lista_negativos = [
         run_neg.tn_01,
         run_neg.tn_02,
-        run_neg.tn_03
+        run_neg.tn_03,
+        run_neg.tn_04
     ]
 
     while True:

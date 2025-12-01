@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import Select, WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from base import SauceBase
 
@@ -8,9 +9,7 @@ class TestesNegativos(SauceBase):
     def tn_01(self):
         """TN01 - Login sem Usuário"""
         try:
-            self.iniciar_driver()
-            self.garantir_logout()
-            self.driver.refresh()
+            self.preparar_tn()
             self.driver.get("https://www.saucedemo.com")
             time.sleep(1)
             self.preenche_login(self.driver, "", "secret_sauce")
@@ -27,8 +26,7 @@ class TestesNegativos(SauceBase):
     def tn_02(self):
         """TN02 - Login sem Senha"""
         try:    
-            self.garantir_logout()
-            self.driver.refresh()
+            self.preparar_tn()
             time.sleep(1)
             self.preenche_login(self.driver, "standard_user", "")
             self.driver.find_element(By.ID, "login-button").click()
@@ -44,8 +42,7 @@ class TestesNegativos(SauceBase):
     def tn_03(self):
         """TN03 - Login com Dados Inválidos"""
         try:
-            self.garantir_logout()
-            self.driver.refresh()
+            self.preparar_tn()
             time.sleep(1)
             self.preenche_login(self.driver, "user", "123")
             self.driver.find_element(By.ID, "login-button").click()
@@ -61,15 +58,46 @@ class TestesNegativos(SauceBase):
 
     def tn_04(self):
         """TN04 - Login com Usuário Bloqueado"""
-        # ... código ...
+        try:
+            self.preparar_tn()
+            self.preenche_login(self.driver, "locked_out_user", "secret_sauce")
+            self.driver.find_element(By.ID, "login-button").click()
+            msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']").text
+            if "locked out" in msg:
+                self.alertar(self.driver, "TESTE 4 foi um sucesso!")
+                return(True,"Teste 4 - Sucesso!")
+            else: 
+                return (False, f"Teste 4 - Falhou")
+        except Exception as e:
+            return (False, f"Teste 4 - Erro {e}")
 
     def tn_05(self):
-        """TN05 - Login Case Sensitive (Maiúsculas Erradas)"""
-        # ... código ...
+        """TN05 - Login Performance User (Validar Lentidão)"""
+        try:
+            self.preparar_tn()
+            self.preenche_login(self.driver, "performance_glitch_user", "secret_sauce")
+            inicio = time.time()
+            self.driver.find_element(By.ID, "login-button").click()
+            wait = WebDriverWait(self.driver, 10)
+            wait.until(EC.url_contains("inventory.html"))
+            fim = time.time()
+            tempo_total = fim - inicio
+
+            if tempo_total > 2:
+                self.alertar(self.driver, f"TN 05 - Sucesso! Usuário sofreu atraso no login. ({round(tempo_total, 2)}s)!")
+                return (True, "TN 05 - Sucesso!")
+            return (False, f"TN 05 - Falha! ({round(tempo_total, 2)}s).")
+
+        except Exception as e:
+            return (False, f"TN 05 - Erro técnico: {e}")
 
     def tn_06(self):
-        """TN06 - Login com Espaço em Branco Extra"""
-        # ... código ...
+        """TN06 - Login Problem User (Imagens Quebradas)"""
+        try:
+            self.preparar_tn()
+            self.preenche_login(self.driver,"problem_user","secret_sauce")
+            self.driver.find_element(By.ID, "login-button").click()
+
 
     def tn_07(self):
         """TN07 - Login Problem User (Imagens Quebradas)"""

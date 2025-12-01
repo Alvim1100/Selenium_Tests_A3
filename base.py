@@ -139,3 +139,8 @@ class SauceBase:
             print(linha_final)
             self.resultados.append(linha_final)
             time.sleep(0.5)
+
+    def preparar_tn(self):
+        self.iniciar_driver()
+        self.garantir_logout()
+        self.driver.refresh()
