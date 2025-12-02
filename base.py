@@ -5,16 +5,23 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 import time
+from colorama import init, Fore, Style
+init(autoreset=True)
 
 
 class SauceBase:
     def __init__(self):
         self.resultados = []
         self.driver = None
+        self.headless = False
 
     def iniciar_driver(self):
         if self.driver is None:
             options = Options()
+
+            if self.headless == True:
+                # "--headless=new" é a sintaxe moderna e mais estável do Chrome
+                options.add_argument("--headless=new")
 
             # --- PREFERÊNCIAS DO USUÁRIO ---
             prefs = {
@@ -172,10 +179,15 @@ class SauceBase:
             
             descricao = descricao.strip()
             passou, mensagem = teste()
-            icone = "✔" if passou else "✘"
+    
+            if passou:
+                icone = f"{Fore.GREEN}✔{Style.RESET_ALL}"
+                msg_formatada = f"{Fore.GREEN}{mensagem}{Style.RESET_ALL}"
+            else:
+                icone = f"{Fore.RED}✘{Style.RESET_ALL}"
+                msg_formatada = f"{Fore.RED}{mensagem}{Style.RESET_ALL}"
 
-            # Formato: [✔] TP01 - Login Standard: Mensagem do sistema
-            linha_final = f"[{icone}] {descricao}: {mensagem}"
+            linha_final = f"[{icone}] {descricao}: {msg_formatada}"
             
             print(linha_final)
             self.resultados.append(linha_final)

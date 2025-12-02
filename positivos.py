@@ -164,7 +164,7 @@ class TestesPositivos(SauceBase):
             return (False, f"Teste 8 - Erro {e}")
         
     def tp_09(self):
-        """TP08 - Filtro Z-A (Ordem Alfabética Decrescente)"""
+        """TP09 - Filtro A-Z (Ordem Alfabética Crescente)"""
 
         try:
             self.garantir_url("inventory.html","https://www.saucedemo.com/inventory.html")

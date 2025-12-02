@@ -1,5 +1,7 @@
 from positivos import TestesPositivos
 from negativos import TestesNegativos
+from colorama import init, Fore, Style
+init(autoreset=True)
 
 def menu():
     run_pos = TestesPositivos()
@@ -53,10 +55,13 @@ def menu():
     ]
 
     while True:
-        print("\n--- MENU ---")
+        print(f"\n{Fore.CYAN}{Style.BRIGHT}--- MENU PRINCIPAL ---{Style.RESET_ALL}")
         print("1 - Testes Positivos")
         print("2 - Testes Negativos")
         print("3 - Todos os Testes")
+        print("4 - Testes Rápidos Positivos")
+        print("5 - Testes Rápidos Negativos")
+        print("6 - Testes Rápidos Todos")
         print("0 - Sair")
         
         try:
@@ -69,6 +74,28 @@ def menu():
             elif o == 3:
                 run_pos.executar(lista_positivos, "BATERIA POSITIVA")
                 run_neg.executar(lista_negativos, "BATERIA NEGATIVA")
+            elif o == 4:             
+                if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
+                if run_neg.driver: run_neg.driver.quit(); run_neg.driver = None
+                run_pos.headless = True 
+                run_pos.executar(lista_positivos, "POSITIVOS RÁPIDOS")
+                run_pos.headless = False
+            elif o == 5:      
+                if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
+                if run_neg.driver: run_neg.driver.quit(); run_neg.driver = None       
+                run_neg.headless = True  
+                run_neg.executar(lista_negativos, "NEGATIVOS RÁPIDOS")
+                run_neg.headless = False
+            elif o == 6:  
+                if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
+                if run_neg.driver: run_neg.driver.quit(); run_neg.driver = None           
+                run_pos.headless = True 
+                run_neg.headless = True 
+                run_pos.executar(lista_positivos, "BATERIA POSITIVA")
+                run_neg.driver = run_pos.driver 
+                run_neg.executar(lista_negativos, "BATERIA NEGATIVA")
+                run_pos.headless = False
+                run_neg.headless = False
             elif o == 0:
                 run_pos.encerrar()
                 run_neg.encerrar()
