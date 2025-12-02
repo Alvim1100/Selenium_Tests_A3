@@ -33,7 +33,19 @@ def menu():
         run_neg.tn_01,
         run_neg.tn_02,
         run_neg.tn_03,
-        run_neg.tn_04
+        run_neg.tn_04,
+        run_neg.tn_05,
+        run_neg.tn_06,
+        run_neg.tn_07,
+        run_neg.tn_08,
+        run_neg.tn_09,
+        run_neg.tn_10,
+        run_neg.tn_11,
+        run_neg.tn_12,
+        run_neg.tn_13,
+        run_neg.tn_14,
+        run_neg.tn_15,
+        run_neg.tn_16
     ]
 
     while True:

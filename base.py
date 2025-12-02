@@ -3,6 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import time
 
 
@@ -12,10 +13,39 @@ class SauceBase:
         self.driver = None
 
     def iniciar_driver(self):
-            if self.driver is None:
-                self.driver = webdriver.Chrome()
-                self.driver.maximize_window()
-            return self.driver
+        if self.driver is None:
+            options = Options()
+
+            # --- PREFERÊNCIAS DO USUÁRIO ---
+            prefs = {
+                # 1. Desliga o Gerenciador de Senhas
+                "credentials_enable_service": False,
+                "profile.password_manager_enabled": False,
+                
+                # 2. Desliga o alerta de vazamento de dados
+                "profile.password_manager_leak_detection": False,
+                
+                # 3. Desliga o Safe Browsing
+                "safebrowsing.enabled": False,
+                "safebrowsing.disable_download_protection": True,
+                
+                # 4. Bloqueia notificações gerais
+                "profile.default_content_setting_values.notifications": 2
+            }
+            options.add_experimental_option("prefs", prefs)
+
+            # Desativa recursos visuais de segurança
+            options.add_argument("--disable-features=PasswordLeakDetection")
+            options.add_argument("--disable-save-password-bubble")
+            
+            # Evita detecção de automação
+            options.add_argument("--disable-blink-features=AutomationControlled")
+            options.add_experimental_option("excludeSwitches", ["enable-automation"])
+            options.add_argument("--start-maximized")
+
+            self.driver = webdriver.Chrome(options=options)
+            
+        return self.driver
         
     def encerrar(self):
         print("\n--- RELATÓRIO FINAL ---")
@@ -48,24 +78,32 @@ class SauceBase:
         time.sleep(1)
 
     def preenche_checkout(self, nome, sobrenome, cep):
-        self.digitar_devagar(self.driver.find_element(By.ID, "first-name"), nome)
-        self.digitar_devagar(self.driver.find_element(By.ID, "last-name"), sobrenome)
-        self.digitar_devagar(self.driver.find_element(By.ID, "postal-code"), cep)
+        input_nome = self.driver.find_element(By.ID, "first-name")
+        input_sobrenome = self.driver.find_element(By.ID, "last-name")
+        input_cep = self.driver.find_element(By.ID, "postal-code")
+
+        input_nome.clear()
+        input_sobrenome.clear()
+        input_cep.clear()
+
+        self.digitar_devagar(input_nome, nome)
+        self.digitar_devagar(input_sobrenome, sobrenome)
+        self.digitar_devagar(input_cep, cep)
 
     def garantir_login(self):
         if self.driver is None:
             self.iniciar_driver()
+            
         try:
-            # Se não estiver no site certo, vai pra lá
             if "saucedemo.com" not in self.driver.current_url:
                 self.driver.get("https://www.saucedemo.com")
-            
-            # Tenta logar 
+            if len(self.driver.find_elements(By.ID, "react-burger-menu-btn")) > 0:
+                return
             self.driver.find_element(By.ID, "user-name").send_keys("standard_user")
             self.driver.find_element(By.ID, "password").send_keys("secret_sauce")
-            self.driver.find_element(By.ID, "login-button").click()
-        except:
-            pass
+            self.driver.find_element(By.ID, "login-button").click() 
+        except Exception as e:
+            print(f"Erro no garantir_login: {e}")
 
     def garantir_url(self, parte_desejada , url):
         if self.driver is None:
@@ -143,4 +181,22 @@ class SauceBase:
     def preparar_tn(self):
         self.iniciar_driver()
         self.garantir_logout()
+        self.driver.delete_all_cookies()
         self.driver.refresh()
+
+    def preencher_carrinho(self):
+        try:
+            self.driver.get("https://www.saucedemo.com/checkout-step-one.html")
+            
+            if "checkout-step-one" not in self.driver.current_url:    
+                self.garantir_url("inventory.html", "https://www.saucedemo.com/inventory.html")
+
+                botoes_remove = self.driver.find_elements(By.ID, "remove-sauce-labs-backpack")
+                
+                if len(botoes_remove) == 0:
+                    self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+                
+                self.driver.get("https://www.saucedemo.com/checkout-step-one.html")
+                
+        except Exception as e:
+            raise e
