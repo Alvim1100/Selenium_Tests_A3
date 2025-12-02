@@ -10,7 +10,6 @@ class TestesPositivos(SauceBase):
         try:
             self.iniciar_driver()
             self.driver.get("https://www.saucedemo.com")
-            time.sleep(0.5)
             self.preenche_login(self.driver, "standard_user", "secret_sauce")
             self.driver.find_element(By.ID, "login-button").click()
 

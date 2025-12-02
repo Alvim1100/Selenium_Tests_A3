@@ -68,12 +68,30 @@ def menu():
             o = int(input("Opção: "))
             
             if o == 1:
+                if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
                 run_pos.executar(lista_positivos, "POSITIVOS")
+                if run_pos.driver: 
+                    run_pos.driver.quit()
+                    run_pos.driver = None
             elif o == 2:
+                if run_neg.driver: run_neg.driver.quit(); run_neg.driver = None
                 run_neg.executar(lista_negativos, "NEGATIVOS")
+                if run_neg.driver: 
+                    run_neg.driver.quit()
+                    run_neg.driver = None
             elif o == 3:
+                run_pos.headless = False
+                if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
+                
                 run_pos.executar(lista_positivos, "BATERIA POSITIVA")
+                
+                run_neg.driver = run_pos.driver 
                 run_neg.executar(lista_negativos, "BATERIA NEGATIVA")
+                
+                if run_neg.driver: 
+                    run_neg.driver.quit()
+                    run_neg.driver = None # <--- Garante que limpou
+                    run_pos.driver = None
             elif o == 4:             
                 if run_pos.driver: run_pos.driver.quit(); run_pos.driver = None
                 if run_neg.driver: run_neg.driver.quit(); run_neg.driver = None

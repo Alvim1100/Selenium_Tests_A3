@@ -205,7 +205,7 @@ class SauceBase:
             
             if "checkout-step-one" not in self.driver.current_url:    
                 self.garantir_url("inventory.html", "https://www.saucedemo.com/inventory.html")
-
+                time.sleep(0.5)
                 botoes_remove = self.driver.find_elements(By.ID, "remove-sauce-labs-backpack")
                 
                 if len(botoes_remove) == 0:
