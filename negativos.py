@@ -173,8 +173,11 @@ class TestesNegativos(SauceBase):
     def tn_11(self):
         """TN11 - Checkout sem Nome (Campo Obrigatório)"""
         try:
-            self.iniciar_driver()
+            self.preparar_tn()
             self.garantir_login()
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
 
             self.preencher_carrinho()
 
@@ -183,10 +186,9 @@ class TestesNegativos(SauceBase):
             self.driver.find_element(By.ID, "continue").click()
             time.sleep(1)
 
-            msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']")
-
             try:
                 msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']")
+
                 if "First Name is required" in msg.text:
                     self.alertar(self.driver, "TESTE 11: Erro de Nome Obrigatório ok!")
                     return (True, "Teste 11 - Sucesso!")
@@ -304,16 +306,99 @@ class TestesNegativos(SauceBase):
             return (False, f"Teste 16 - Erro técnico: {e}")
 
     def tn_17(self):
-        """TN17 - Checkout com Injeção de Script (XSS)"""
-        # ... código ...
+        """TN17 - Acesso Direto Checkout Step 2"""
+        try:    
+            self.preparar_tn()
+            self.garantir_login()
+            self.resetar_aplicacao()
+
+            self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+
+            self.driver.get("https://www.saucedemo.com/checkout-step-two.html")
+            
+            # Verifica se o site permitiu a entrada (Bug do site/Falha de Segurança)
+            if "checkout-step-two" in self.driver.current_url:
+                self.alertar(self.driver, "TESTE 17 - Falha de Segurança! Acesso direto não bloqueado pelo sistema.")
+                return (True, "Teste 17 - Sucesso! O teste detectou a falha de segurança esperada no site.")
+            
+            # Se não permitiu, verifica se mostrou erro
+            try:
+                msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']")
+                return (True, f"Teste 17 - Sucesso! Bloqueio funcionou: {msg.text}")
+            except:
+                return (True, "Teste 17 - Sucesso! ")
+
+        except Exception as e:
+            return (False, f"Teste 17 - Erro técnico: {e}")
+
 
     def tn_18(self):
-        """TN18 - Checkout com Nome Gigante (Stress Test)"""
-        # ... código ...
+        """TN18 - Acesso Direto Checkout Complete"""
+        try:    
+            self.resetar_aplicacao() 
+            self.preparar_tn()
+            self.garantir_login()
+
+            self.driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+
+            # Tenta pular para a finalização
+            self.driver.get("https://www.saucedemo.com/checkout-complete.html")
+
+            if "checkout-complete" in self.driver.current_url:
+                 self.alertar(self.driver, "TESTE 18 - Falha de Segurança! Acesso direto não bloqueado pelo sistema.")
+                 return (True, "Teste 18 - Sucesso! O teste detectou a falha de segurança esperada no site.")
+            
+            try:
+                msg = self.driver.find_element(By.CSS_SELECTOR, "h3[data-test='error']")
+                return (True, f"Teste 18 - Sucesso! Bloqueio funcionou: {msg.text}")
+            except:
+                return (True, "Teste 18 - Sucesso!")
+
+        except Exception as e:
+            return (False, f"Teste 18 - Erro técnico: {e}")
 
     def tn_19(self):
-        """TN19 - Remover Item Inexistente via Código"""
-        # ... código ...
+        """TN19 - Página Inexistente (404)"""
+        try:
+            self.preparar_tn()
+            self.garantir_login()
+            
+            self.driver.get("https://www.saucedemo.com/batata.html")
+
+            if "inventory.html" in self.driver.current_url:
+                produtos = self.driver.find_elements(By.CLASS_NAME, "inventory_item")
+                if len(produtos) > 0:
+                    self.alertar(self.driver, "TESTE 19: Site redirecionou URL inválida para Home (Seguro)!")
+                    return (True, "Teste 19 - Sucesso!")
+
+            produtos = self.driver.find_elements(By.CLASS_NAME, "inventory_item")
+            if len(produtos) == 0:
+                self.alertar(self.driver, "TESTE 19: Botão Remover não existe. Comportamento Correto!")
+                return (True, "Teste 19 - Sucesso!")
+
+            # Se chegou aqui, é falha (está na URL errada mas carregou produtos ou quebrou)
+            return (False, f"Teste 19 - Falha! Comportamento inesperado na URL: {self.driver.current_url}")
+
+        except Exception as e:
+            return (False, f"Teste 19 - Erro técnico: {e}")
+
 
     def tn_20(self):
-        """TN20 - Tentar Checkout com Carrinho Vazio"""
+        """TN20 - Remover Item Inexistente (Validar Exceção)"""
+        try:
+            self.preparar_tn()
+            self.garantir_login()            
+            self.resetar_aplicacao() 
+            self.driver.refresh()
+
+            if "inventory.html" not in self.driver.current_url:
+                self.driver.get("https://www.saucedemo.com/inventory.html")
+
+            try:
+                self.driver.find_element(By.ID, "remove-sauce-labs-backpack").click()
+                return (False, "Teste 20 - Falha! O botão 'Remover' foi encontrado.")
+            except Exception:
+                self.alertar(self.driver, "TESTE 20: Botão Remover não existe. Comportamento Correto!")
+                return (True, "Teste 20 - Sucesso!")
+        except Exception as e:
+            return (False, f"Teste 20 - Erro técnico: {e}")

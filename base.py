@@ -93,6 +93,9 @@ class SauceBase:
     def garantir_login(self):
         if self.driver is None:
             self.iniciar_driver()
+
+        if len(self.driver.find_elements(By.ID, "user-name")) == 0:
+                self.driver.get("https://www.saucedemo.com")
             
         try:
             if "saucedemo.com" not in self.driver.current_url:
@@ -184,7 +187,7 @@ class SauceBase:
         self.driver.delete_all_cookies()
         self.driver.refresh()
 
-    def preencher_carrinho(self):
+    def preencher_carrinho(self): #checkout
         try:
             self.driver.get("https://www.saucedemo.com/checkout-step-one.html")
             
@@ -200,3 +203,17 @@ class SauceBase:
                 
         except Exception as e:
             raise e
+        
+    def resetar_aplicacao(self):
+        try:
+            if len(self.driver.find_elements(By.ID, "react-burger-menu-btn")) > 0:
+                self.driver.find_element(By.ID, "react-burger-menu-btn").click()
+                
+                wait = WebDriverWait(self.driver, 5)
+                reset_link = wait.until(EC.element_to_be_clickable((By.ID, "reset_sidebar_link")))
+                reset_link.click()
+                
+                self.driver.find_element(By.ID, "react-burger-cross-btn").click()
+                time.sleep(0.5)
+        except Exception as e:
+            print(f"Não foi possível resetar o app: {e}")
